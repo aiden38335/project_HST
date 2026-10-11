@@ -1,0 +1,13 @@
+config.json
+
+# Python virtual environments
+.venv/
+venv/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# macOS metadata
+.DS_Store
+archive/
