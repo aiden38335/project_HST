@@ -5,7 +5,7 @@ description = "A study app for Health Science and Technology passages"
 requires-python = ">=3.10"
 dependencies = [
     "huggingface-hub==1.13.0",
-    "streamlit==1.32.0",
+    "streamlit>=1.65.0",
 ]
 
 [tool.uv]
