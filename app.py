@@ -60,10 +60,13 @@ STOPWORDS = {
 }
 
 SAMPLE_PASSAGE = (
-    "Artificial intelligence is transforming healthcare by enabling researchers "
-    "to analyze large biomedical datasets and identify patterns that were "
-    "previously difficult to detect. These advances may improve early disease "
-    "detection and support clinical decision-making."
+    "Vaccines help the immune system learn to recognize a virus before a real infection happens."
+    "A vaccine contains a weakened virus, an inactive virus, or only a small piece of the virus, such as a protein."
+    "When the vaccine enters the body, immune cells called B cells detect the protein and start to make antibodies."
+    "Antibodies are proteins that attach to the virus and stop it from entering healthy cells. "
+    "Other immune cells, called T cells, destroy cells that are already infected. After the response ends, some B cells and T cells stay in the body as memory cells."
+    "If the real virus appears later, these memory cells recognize it quickly, so the immune system can make antibodies much faster."
+    "This is why vaccines can prevent serious disease without causing the illness itself."
 )
 
 
@@ -104,6 +107,22 @@ def check_passage(text):
         )
     return None
 
+def tokenize_words(text):
+    """ Extract only the English words and create a list with all words converted to lowercase. 
+        The regular expression [a-zA-Z]+ matches one or more consecutive English alphabet characters.
+        For example, in "B cells, T cells.", it finds ["B", "cells", "T", "cells"].
+        The final lowercase list would be ["b", "cells", "t", "cells"].
+    """
+
+    words = re.findall(r"[a-zA-Z]+", text)
+    return [word.lower() for word in words]
+
+def find_important_words(text, max_words=MAX_KEYWORDS):
+    """find the most commonly used word, remove any stopwords or 3 letter words, counter counts how many times each words appears
+    ex) if cells appeared 10times it would be (cells, 10)
+    """
+    candidates = [word for word in tokenize_words(text) if len(word) >= 3 and word not in STOPWORDS]
+    return Counter(candidates).most_common(max_words)
 
 
 st.set_page_config(page_title="HST Guide", page_icon="", layout="centered")
@@ -123,7 +142,7 @@ passage = st.text_area(
 )
 
 if passage.strip():
-    st.caption(f"{len(passage.split())} words")
+    st.caption(f"{count_words((passage))} words")
 else:
     st.info("Enter a passage or load the sample passage to get started.")
 left,right = st.columns(2)
@@ -142,12 +161,12 @@ if create_clicked:
         st.success("Your passage is ready!")
         st.metric("Words", count_words(passage))
 
-def tokenize_words(text):
-    """ Extract only the English words and create a list with all words converted to lowercase. 
-        The regular expression [a-zA-Z]+ matches one or more consecutive English alphabet characters.
-        For example, in "B cells, T cells.", it finds ["B", "cells", "T", "cells"].
-        The final lowercase list would be ["b", "cells", "t", "cells"].
-    """
+        important_words = find_important_words(passage)
+        print(important_words)
+        st.subheader("Important words")
+        if len(important_words) == 0: 
+            st.info("No important words were found. Try a longer HST passage")
+        else:
+            st.table([{"Word": word, "Count": count} for word, count in important_words])
 
-    words = re.findall(r"[a-zA-Z]+", text)
-    return [word.lower() for word in words]
+
