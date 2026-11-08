@@ -6,7 +6,7 @@ MIN_WORDS = 30
 
 MAX_KEYWORDS = 8
 
-MAX_QUESTIONS = 5
+
 
 STOPWORDS = {
     "a",
@@ -67,18 +67,18 @@ SAMPLE_PASSAGE = (
 )
 
 
-def load_sample() -> None:
+def load_sample():
     """Put the example passage into the study input."""
     st.session_state["passage"] = SAMPLE_PASSAGE
 
 def count_words(text):
-    """공백(띄어쓰기, 줄바꿈)을 기준으로 잘라서 단어 개수를 센다"""
+    """Count the number of words by splitting the text based on whitespace (spaces and line breaks)."""
     return len(text.split())
 
 def is_mostly_english(text):
-    """ 글자(알파벳, 한글 등)중 영어 알파벳이 90% 이상이면 True.
-    - ch.isalpha() : 글자이면 True (숫자, 공백, 문자부호는 False)
-    - ch.isascii() : 영어 알파벳처럼 기본 키보드 문자이면 True (한글은 False)
+    """ If 90% or more of the characters (letters such as English and Korean) are English alphabet characters, return True.
+        ch.isalpha(): Returns True if the character is a letter (returns False for numbers, whitespace, and punctuation).
+        ch.isascii(): Returns True if the character is an ASCII character (basic keyboard characters, including English letters, numbers, and symbols; returns False for Korean characters)
     """
 
     letters = [ch for ch in text if ch.isalpha()]
@@ -89,8 +89,8 @@ def is_mostly_english(text):
     return len(english) / len(letters) >= 0.9
 
 def check_passage(text):
-    """지문에 문제가 있으면 사용자에게 보여줄 안내 장문을, 없으면 None을 돌려준다
-    검사는 위에서부토 차례로 하고, 첫 번째로 걸린 문제만 알려준다.
+    """If there is an issue with the passage, return a detailed message to display to the user. If there are no issues, return None.
+    Perform the checks in the order listed above and report only the first issue detected.
     """
     if text == "":
         return "The box is empty. Please paste an English passage first "
@@ -106,15 +106,15 @@ def check_passage(text):
 
 
 
-st.set_page_config(page_title="HST Guide", page_icon="📚", layout="centered")
+st.set_page_config(page_title="HST Guide", page_icon="", layout="centered")
 
-st.title("📚 HST Guide")
+st.title(" HST Guide")
 st.caption("A study space for Health Science and Technology")
 
 st.header("Study")
 st.write("Start by pasting an English passage you want to study.")
 
-# st.button("Load sample passage", on_click=load_sample_passage)
+
 passage = st.text_area(
     "English passage",
     key="passage",
@@ -130,7 +130,7 @@ left,right = st.columns(2)
 with left:
     st.button("Use sample passage", on_click = load_sample, width="stretch")
 with right: 
-    create_clicked = st.button("Create study set", type = "primary", width = "stretch")
+    create_clicked = st.button("Analyze passage", type = "primary", width = "stretch")
 
 if create_clicked:
     passage = st.session_state["passage"].strip()
@@ -143,9 +143,10 @@ if create_clicked:
         st.metric("Words", count_words(passage))
 
 def tokenize_words(text):
-    """ 영어 단어만 뽑아서 모두 소문자로 바꾼 리스트를 만든다.
-    절규표현식 [a-zA-Z]+ 는 "영어 알파벳이 1개 이상 이어진 부분"을 뜻한다
-    예를 들어 "B cells, T cells."에서는 ["B","cells","T", "cells"]를 찾는다.
+    """ Extract only the English words and create a list with all words converted to lowercase. 
+        The regular expression [a-zA-Z]+ matches one or more consecutive English alphabet characters.
+        For example, in "B cells, T cells.", it finds ["B", "cells", "T", "cells"].
+        The final lowercase list would be ["b", "cells", "t", "cells"].
     """
 
     words = re.findall(r"[a-zA-Z]+", text)
