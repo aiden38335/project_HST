@@ -104,6 +104,24 @@ The Study page includes:
 - an AI summary  
 - a list of important words
 
+### Map Page
+
+The map page includes: 
+
+- a visual concept map 
+- question bar 
+- answers and relationship explanation
+- relevant sentences 
+
+### Explain Page 
+
+The Explain page inlcudes:
+
+- a word selection box 
+- explanation of two words or concepts
+- accuracy measure 
+- feedback bar
+
 ### Quiz Page
 
 The Quiz page includes:
@@ -111,7 +129,6 @@ The Quiz page includes:
 - fill-in-the-blank questions  
 - answer boxes  
 - a check answers button  
-- the final score  
 - correct answer information  
 - Long answer question
 
@@ -138,6 +155,7 @@ The first version of AI Study Mate will include:
 - important word extraction  
 - fill-in-the-blank questions  
 - automatic scoring
+- concept map 
 
 ## 9\. Features Not Included Yet
 
@@ -177,6 +195,10 @@ The program creates blank questions.
 
                 ↓
 
+The program creates a concept map 
+
+                ↓
+
 The user answers the questions.
 
                 ↓
@@ -198,6 +220,9 @@ The first version is complete when:
 - the user can type answers  
 - the app can check the answers  
 - the app can show a score
+- the app can produce a viusal diagram 
+- the app can produce a visual percentage 
+- the app gives accurate feedback 
 
 ## 12\. Questions to Decide Later
 

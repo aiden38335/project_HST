@@ -8,6 +8,9 @@ The groundwork for the website has been established, providing a starting point 
 # Current mechanisms 
 - we made a word counting system to count all the words when a passage is inserted
 - also made a important words section where it would oull out important vocabulary from the passage
+- also added a concept map 
+- talks about the relationship of two words 
+- makes questions and provides feedback 
 # Current Progress
 - Initial website foundation completed.
 - Core project structure established.
