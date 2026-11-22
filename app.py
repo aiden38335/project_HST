@@ -6,6 +6,7 @@ MIN_WORDS = 30
 
 MAX_KEYWORDS = 8
 
+MAX_LINKS = 10
 
 
 STOPWORDS = {
@@ -124,6 +125,44 @@ def find_important_words(text, max_words=MAX_KEYWORDS):
     candidates = [word for word in tokenize_words(text) if len(word) >= 3 and word not in STOPWORDS]
     return Counter(candidates).most_common(max_words)
 
+def split_sentences(text):
+    """
+    it collects characters one by one and cuts itdown when it sees like periods 
+    the last check keeps the final sentence even though it has no punctuation or limit
+    """
+    sentences = []
+    current = ""
+    for ch in text: 
+        current += ch 
+        if ch in ".?!":
+            if current.strip() != "":
+                sentences.append(current.strip())
+            current = ""
+    if current.strip() != "":
+        sentences.append(current.strip())
+    return sentences
+
+def find_links(text, important_words):
+# important word if they occur in the same sentence, it finds important word and makes every pair the pair is onky made once and a word is never paired with itself 
+    keywords = [word for word, count in important_words]
+    links = Counter()
+    for sentence in split_sentences(text):
+        words_here = tokenize_words(sentence)
+        # words_here : ["cells","virus",...]
+        found = [word for word in keywords if word in words_here]
+        for i in range(len(found)):
+            for j in range(i+1, len(found)):
+                links[found[i]+ " - " + found[j]] += 1
+    return links.most_common(MAX_LINKS)
+
+def make_map_dot(links):
+# needed in order to graph in streamlit
+    dot = "graph{\n"
+    for pair, count in links: 
+        word_a, word_b = pair.split(" - ")
+        dot += f' "{word_a}" -- "{word_b}" [label="{count}"]\n'
+    dot += "}"
+    return dot 
 
 st.set_page_config(page_title="HST Guide", page_icon="", layout="centered")
 
@@ -168,5 +207,12 @@ if create_clicked:
             st.info("No important words were found. Try a longer HST passage")
         else:
             st.table([{"Word": word, "Count": count} for word, count in important_words])
+            links = find_links(passage, important_words)
+        st.subheader("Concept map")
+        if len(links) == 0:
+            st.info("No two important words appear in the same sentence yet.")
+        else:
+            st.graphviz_chart(make_map_dot(links))
+            st.caption("A line means the two words appear in the same sentence. The number shows in how many sentences.")
 
 
